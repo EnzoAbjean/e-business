@@ -3,14 +3,25 @@ const axios = require('axios')
 const app = express()
 const PORT = process.env.PORT || 5000 // this is very important
 
+
 /* middleware json*/
-app.use(express.json())
+app.use(function(req, res, next){
+
+    res.header('Access-Control-Allow-Origin', 'https://6ji1h.csb.app')
+    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+    res.header('Access-Control-Allow-Headers', 'Content-Type')
+    express.json();
+    next();
+
+})
+
 
 const axiosCli=axios.create({
     baseURL: 'https://tpnote-017c.restdb.io/rest/',
     headers:
     { 'cache-control': 'no-cache',
         'x-apikey': '071bbf24ada5ce19c7ba1bf445b7e0dcef75f' }});
+
 
 app.get('/Connexion', function (req, res) {
 

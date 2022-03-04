@@ -4,17 +4,8 @@ const app = express()
 const PORT = process.env.PORT || 5000 // this is very important
 
 
-/* middleware json*/
-app.use(function(req, res, next){
-
-    res.header('Access-Control-Allow-Origin', 'https://6ji1h.csb.app')
-    res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-    res.header('Access-Control-Allow-Headers', 'Content-Type')
-    express.json();
-    next();
-
-})
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 const axiosCli=axios.create({
     baseURL: 'https://tpnote-017c.restdb.io/rest/',
@@ -53,6 +44,8 @@ app.post('/AddRecipe', async function(req, res) {
     /* New recipe */
     const recipe = req.body
 
+    console.log(req.body)
+
     try{
         const fetchR1 = await axiosCli.post('recette', recipe)
         res.json({result:'ok'});
@@ -85,6 +78,7 @@ app.put('/UpdateRecipe/:id', async function(req, res) {
     try{
         const fetchR2 = await axiosCli.put('recette/' + req.params.id, recipe).then(result=>{return result.data})
         res.json({result:'ok'});
+        console.log(recipe);
 
     }
     catch (e){
@@ -94,7 +88,7 @@ app.put('/UpdateRecipe/:id', async function(req, res) {
 
 /* Le port */
 app.listen(PORT, function () {
-    console.log('Example app listening on port ' + PORT)
+    console.log('app listening on port ' + PORT)
 })
 
 

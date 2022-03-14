@@ -15,6 +15,7 @@ const passportJWT = require('passport-jwt')
 const secret = 'thisismysecret'
 const ExtractJwt = passportJWT.ExtractJwt
 const JwtStrategy = passportJWT.Strategy
+const cors = require('cors')
 
 const jwtOptions = {
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -38,7 +39,8 @@ app.use(function(req, res, next){
 },
     express.json(),
     express.urlencoded({ extended: true }),
-    passport.initialize()
+    passport.initialize(),
+    cors()
 )
 
 passport.use(

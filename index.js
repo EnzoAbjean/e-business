@@ -1,6 +1,6 @@
 
 // Récupération des modules
-const moduleRecette = require('./recipe.js')
+// const moduleRecette = require('./recipe.js')
 
 const bcrypt = require('bcrypt')
 const express = require('express')
@@ -83,8 +83,16 @@ app.get('/CreateLogin', function (req, res) {
 
 /* Récupère toutes les recettes */
 // ce trouve mtn dans recipe.js
-moduleRecette.allRecipes()
+// moduleRecette.allRecipes()
 
+
+app.get('/AllRecipes', async function(req, res) {
+
+const fetchR1 = await axiosCli.get('recette').then(result=>{return result.data});
+res.json(fetchR1);
+})
+
+  
 /* Récupère une recette en fonction de l'id passé en paramètre */
 app.get('/OneRecipe/:id', async function(req, res) {
 
@@ -142,31 +150,6 @@ app.put('/UpdateRecipe/:id', async function(req, res) {
 
 
 // ------------------------- LOGIN ------------------------- //
-const users = [{ email: 'axel.bonnefous@hotmail.fr', password: 'axel' }]
-
-const privateKey = `-----BEGIN RSA PRIVATE KEY-----
-MIICXAIBAAKBgQDKKqB2i2vwuwDDnGv0HmEWjj6mY0n0HNXyZHLkk7WIlQ4tj1QE
-ojpapeI6yOFB2rC7x9nbReBOd92dVLigsH24Hc2mDWVxO/kMy7z0FrtzPToSal04
-Fou9VidMczFobQTFW79ywNaUe4djbhjjmWFxQhJxonLrk5OkwFgl5Bg7HwIDAQAB
-AoGAIHrCtujlWZKhp8ucqGatEHOf6xluizKKyNuMfd6hPqU71uP9CpWJrICUHP+i
-+PKKjFCqVokeZVzqlNlEpERWnhHJQmwjVubeMRj8wWdalaOdUB/ekKs5eXYUDhMc
-kPpl3m+Gsndb6ptEgNAwnxuxRMQEBFfbtFJKr/UUamFwp4ECQQDl9w25y6pM5NWz
-WZCzM9B7SkL8KZRty4QoMMlM1CLEAfP+QexLHgqz9sYYgcyTX4x9Zhp/+MxAUX/0
-TcMrjzNfAkEA4Q3nYqgfCsUlx4xlZ3gNAQhAgnA3WKhhEKb6Z64Qj0ptD6icBlq2
-Syw+yRH28ih+KDgclw+AgfDO2nlRfGHQQQJARxgy2R7a3nzciF8HOi+po4QY42Zj
-afJCQD6c7TCkMt67tP5ic/Kssmh3Y7o1KdafU2FOjgO3+aZ4nWmxDfVulwJAca+m
-XS30UGp6xSzk5Lm+R/E1NS8epkiYj+Lpx4okj13XbfuMpaEZSSwWo1fR2U4fPI3r
-01tfXUSaGb8DLMP0gQJBAK+QmJqytN8JQtYPoogblwNIajaWhWjC3FYhqUPI3+1q
-XAmDIb8OVt/oW/KEMtzwD3hjiaiaCMoM4xe3evlehqQ=
------END RSA PRIVATE KEY-----`
-
-const publicKey = `-----BEGIN PUBLIC KEY-----
-MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDKKqB2i2vwuwDDnGv0HmEWjj6m
-Y0n0HNXyZHLkk7WIlQ4tj1QEojpapeI6yOFB2rC7x9nbReBOd92dVLigsH24Hc2m
-DWVxO/kMy7z0FrtzPToSal04Fou9VidMczFobQTFW79ywNaUe4djbhjjmWFxQhJx
-onLrk5OkwFgl5Bg7HwIDAQAB
------END PUBLIC KEY-----`
-  
 
 app.get('/public', (req, res) => {
 
@@ -181,7 +164,7 @@ app.get('/private', passport.authenticate('jwt', { session: false }), (req, res)
 /* Création d'un compte
 *
 */  
-app.post('/register', async function(req, res) {
+app.post('/Register', async function(req, res) {
 
     /* New user */
     const user = req.body
@@ -197,21 +180,21 @@ app.post('/register', async function(req, res) {
 })
 
 // middleware pour valider le token
-function jwtGuard(req, res, next){
+// function jwtGuard(req, res, next){
 
-    const idToken = req.headers.authorization
+//     const idToken = req.headers.authorization
 
-    jwt.verify(idToken, publicKey, (err, decoded) => {
-        if(err) {
-            res.status(401).send('Unauthorized')
-        } else {
-            req.userToken = decoded;
-            next();
-        }
-    })
-}
+//     jwt.verify(idToken, publicKey, (err, decoded) => {
+//         if(err) {
+//             res.status(401).send('Unauthorized')
+//         } else {
+//             req.userToken = decoded;
+//             next();
+//         }
+//     })
+// }
 
-app.get('/', jwtGuard, (req, res) => {
+app.get('/', (req, res) => {
    
     res.send(req.userToken)
 })
@@ -219,7 +202,7 @@ app.get('/', jwtGuard, (req, res) => {
 /* Authentification d'un utilisateur
 *
 */  
-app.post('/login', async function(req, res) { 
+app.post('/Login', async function(req, res) { 
 
     const email = req.body.email 
     const password = req.body.password
@@ -246,7 +229,7 @@ app.post('/login', async function(req, res) {
     }
 
     
-    const userJwt = jwt.sign({ email: user.email }, privateKey, {algorithm: 'RS256'})
+    const userJwt = jwt.sign({ email: user.email }, private)
     res.send(userJwt)
 
     // res.json({ jwt: userJwt })
